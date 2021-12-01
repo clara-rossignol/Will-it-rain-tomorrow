@@ -1,3 +1,3 @@
 # Will it rain tomorrow?
 
-The task is to predict whether it rains in Pully on the next day given some measurements at different weather stations.
+The task is to predict whether there is some precipitation (rain, snow etc.) on the next day in Pully given some measurements at different weather stations in Switzerland.
