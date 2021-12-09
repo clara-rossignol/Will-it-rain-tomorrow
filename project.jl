@@ -8,7 +8,6 @@ using InteractiveUtils
 begin
 	using Pkg
 	Pkg.activate(joinpath(Pkg.devdir(), "MLCourse"))
-	import Pkg; Pkg.add("MLJModels")
 	using Plots, OpenML, CSV, StatsPlots, MLJ, DataFrames, MLJLinearModels, Random
 end
 
