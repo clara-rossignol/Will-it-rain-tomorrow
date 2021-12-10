@@ -60,10 +60,10 @@ mach1 = machine(LogisticClassifier(penalty = :l2, lambda = 2e-2),
                         data.precipitation_nextday[1:2500]) |> fit!;
 
 # ╔═╡ 11a7232f-7090-45d3-bad8-9dec70350faa
-predict(mach1, data[2226:3176,:])
+predict(mach1, data[2501:3176,:])
 
 # ╔═╡ b7abd5cb-e0c2-4e30-bb82-c6f8552e081a
-predict_mode(mach1, data[2226:3176,:])
+predict_mode(mach1, data[2501:3176,:])
 
 # ╔═╡ cdc2a831-d896-4ea4-8e66-5620cf161bc4
 function losses(machine, input, response)
@@ -75,20 +75,20 @@ function losses(machine, input, response)
 end;
 
 # ╔═╡ 9f4ca23b-3d43-4c2a-b741-0cc97f5bd9af
-losses(mach1, data[1:2225,:], data.precipitation_nextday[1:2225])
+losses(mach1, data[1:2500,:], data.precipitation_nextday[1:2500])
 
 # ╔═╡ ec51b7fe-3230-4d9f-98be-2a8868db6523
 losses(mach1, data[2501:3176,:], data.precipitation_nextday[2501:3176])
 
 # ╔═╡ 9f09b178-44d3-41d0-8733-cfa25fdc8c8a
-confusion_matrix(predict_mode(mach1, select(data[1:2225,:],
+confusion_matrix(predict_mode(mach1, select(data[1:2500,:],
 	Not(:precipitation_nextday))),
-	data.precipitation_nextday[1:2225])
+	data.precipitation_nextday[1:2500])
 
 # ╔═╡ 89ccf6e1-030a-4a9d-a26d-66d3a62c3e67
-confusion_matrix(predict_mode(mach1, select(data[2226:3176,:],
+confusion_matrix(predict_mode(mach1, select(data[2501:3176,:],
 	Not(:precipitation_nextday))),
-	data.precipitation_nextday[2226:3176])
+	data.precipitation_nextday[2501:3176])
 
 # ╔═╡ d2b336a3-ae27-4d28-a61f-b32ccb15ba45
 md"
