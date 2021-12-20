@@ -32,3 +32,30 @@ pred = pdf.(predict(m_forest, test), true)
 example_submission.precipitation_nextday = pred
 
 CSV.write(joinpath(@__DIR__,"submission.csv"), example_submission)
+
+
+
+function TunedModel_forest(data)
+    model_forest = RandomForestClassifier()
+    self_tuning_model = TunedModel(model = model_forest,
+                                resampling = CV(nfolds = 10),
+                                tuning = Grid(),
+                                range = range(model_forest, :n_trees, values = 100:800),
+                                measure = auc)
+    self_tuning_mach = machine(self_tuning_model,
+                            select(data, Not(:precipitation_nextday)),
+                            data.precipitation_nextday) |> fit!
+    rep = report(self_tuning_mach)
+    rep.best_model
+end
+
+
+train = CSV.read(joinpath(@__DIR__, "data","train.csv"), DataFrame)
+valid = CSV.read(joinpath(@__DIR__, "data","valid.csv"), DataFrame)
+test = CSV.read(joinpath(@__DIR__, "data","test.csv"), DataFrame)
+
+coerce!(train, :precipitation_nextday => Multiclass);
+coerce!(valid, :precipitation_nextday => Multiclass);
+coerce!(test, :precipitation_nextday => Multiclass);
+
+TunedModel_forest(train)
