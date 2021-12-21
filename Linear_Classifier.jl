@@ -35,10 +35,10 @@ drop, drop_std, med, med_std = generate(weather, "false");
 function TunedModel_Reg(data)
 	self_tuning_model = TunedModel(model = LogisticClassifier(),
 	                         resampling = CV(nfolds = 10),
-	                         tuning = Grid(goal = 200),
-	                         range = range(model, :lambda,
-									       scale = :log,
-									       lower = 1e-3, upper = 1e2),
+	                         tuning = Grid(goal = 100),
+	                         range = range(model = LogisticClassifier(),
+							 			:lambda, scale = :log,
+									    lower = 1e-3, upper = 1e2),
 	                         measure = auc)
     self_tuning_mach = machine(self_tuning_model, select(data.train[:,:], Not(:precipitation_nextday)), data.train.precipitation_nextday) |> fit!;
 	self_tuning_mach

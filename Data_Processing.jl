@@ -10,8 +10,20 @@ function generate(data, valid = "true")
     coerce!(data_drop, :precipitation_nextday => Multiclass);
     coerce!(data_med, :precipitation_nextday => Multiclass);
 
-    data_drop_std = data_drop;
-    data_med_std = data_med;
+    drop_mach = fit!(machine(Standardizer(), select(data_drop[:,:], Not(:precipitation_nextday))));
+    med_mach = fit!(machine(Standardizer(), select(data_med[:,:], Not(:precipitation_nextday))));
+    data_drop_std = MLJ.transform(drop_mach, select(data_drop[:,:], Not(:precipitation_nextday)));
+    data_med_std = MLJ.transform(med_mach, select(data_med[:,:], Not(:precipitation_nextday)));
+    insertcols!(data_drop_std,:precipitation_nextday=>data_drop.precipitation_nextday[:]);
+    insertcols!(data_med_std,:precipitation_nextday=>data_med.precipitation_nextday[:]);
+
+    coerce!(data_drop_std, :precipitation_nextday => Multiclass);
+    coerce!(data_med_std, :precipitation_nextday => Multiclass);
+
+    coerce!(data_drop_std, Count => MLJ.Continuous)
+    coerce!(data_med_std, Count => MLJ.Continuous)
+
+
     Random.seed!(2809)
     idxs1 = randperm(size(data_drop, 1));
     idxs2 = randperm(size(data_med, 1));
@@ -35,6 +47,23 @@ function generate(data, valid = "true")
         med = (train = data_med[idxs2[idx_med[1]:idx_med[3]], :], test = data_med[idxs2[idx_med[3]:idx_med[4]], :]);
         med_std = (train = data_med_std[idxs2[idx_med[1]:idx_med[3]], :], test = data_med_std[idxs2[idx_med[3]:idx_med[4]], :]);
         drop, drop_std, med, med_std
+    end
+end
+
+function generate_all(data, option = "drop")
+    if option == "drop"
+        drop = dropmissing(data);
+        coerce!(drop, :precipitation_nextday => Multiclass);
+        drop_std = drop;
+
+        drop, drop_std
+    elseif option == "med"
+        med = MLJ.transform(fit!(machine(FillImputer(), select(data[:,:], Not([:precipitation_nextday])))), select(data[:,:], Not([:precipitation_nextday])));
+        insertcols!(med,:precipitation_nextday=>data.precipitation_nextday[:]);
+        coerce!(med, :precipitation_nextday => Multiclass);
+        med_std = med;
+
+        med, med_std
     end
 end
 
