@@ -1,58 +1,65 @@
 using Pkg
 Pkg.activate(joinpath(Pkg.devdir(), "MLCourse"))
-using MLCourse, Plots, CSV, MLJ, DataFrames, MLJLinearModels, Random, Flux, MLJFlux
+using MLCourse, CSV, MLJ, DataFrames, MLJLinearModels, Random, Flux, MLJFlux, MLJXGBoostInterface
 include("./Data_Processing.jl")
 
 train_data = CSV.read(joinpath(@__DIR__, "data", "trainingdata.csv"), DataFrame);
 test_data = CSV.read(joinpath(@__DIR__, "data", "testdata.csv"), DataFrame);
-example_submission = CSV.read(joinpath(@__DIR__, "data", "sample_submission.csv"), DataFrame);
-drop, drop_std, med, med_std = generate(train_data, "false");
 coerce!(train_data, :precipitation_nextday => Multiclass);
 coerce!(test_data, :precipitation_nextday => Multiclass);
-drop
 
-#Simple MLP with similar layers.
-#mach1 = machine(NeuralNetworkClassifier(builder = MLJFlux.@builder(Chain(Dense(n_in, 100, relu), Dense(100, n_out))),
-#     batch_size = 32, epochs = 20), select(drop.train[:,:], Not(:precipitation_nextday)), drop.train.precipitation_nextday) |> fit!;
+example_submission = CSV.read(joinpath(@__DIR__, "data", "sample_submission.csv"), DataFrame);
 
-mach2 = machine(NeuralNetworkClassifier(builder = MLJFlux.Short(n_hidden = 2000, dropout = 0.1, σ = sigmoid),
-      batch_size = 1132, epochs = 200), select(drop.train[:,:], Not(:precipitation_nextday)), drop.train.precipitation_nextday) |> fit!;
-mean(predict_mode(mach2, select(drop.test[:,:], Not(:precipitation_nextday))) .!= drop.test.precipitation_nextday)
-auc_m = MLJ.auc(predict(mach2, select(drop.test[:,:], Not(:precipitation_nextday))), drop.test.precipitation_nextday)
+drop = generate(train_data, option = "drop", valid = "false", test = "true");
+med = generate(train_data, option = "med", valid = "false", test = "true");
 
 
-#fit!(m_mlp, verbosity = 2)
+
+m_nn_drop = machine(NeuralNetworkClassifier(builder = MLJFlux.Short(n_hidden = 200, dropout = 0.1, σ = sigmoid),
+      batch_size = 1132, epochs = 100), select(drop.train[:,:], Not(:precipitation_nextday)), drop.train.precipitation_nextday) |> fit!;
+mean(predict_mode(m_nn_drop, select(drop.test[:,:], Not(:precipitation_nextday))) .!= drop.test.precipitation_nextday)
+auc_m_nn_drop = MLJ.auc(predict(m_nn_drop, select(drop.test[:,:], Not(:precipitation_nextday))), drop.test.precipitation_nextday)
+
+m_nn_med = machine(NeuralNetworkClassifier(builder = MLJFlux.Short(n_hidden = 200, dropout = 0.1, σ = sigmoid),
+      batch_size = 2000, epochs = 100), select(med.train[:,:], Not(:precipitation_nextday)), med.train.precipitation_nextday) |> fit!;
+mean(predict_mode(m_nn_med, select(med.test[:,:], Not(:precipitation_nextday))) .!= med.test.precipitation_nextday)
+auc_m_nn_med = MLJ.auc(predict(m_nn_med, select(med.test[:,:], Not(:precipitation_nextday))), med.test.precipitation_nextday)
+
+
+
+
+m_mlp = machine(NeuralNetworkClassifier(
+                    builder = MLJFlux.@builder(Chain(Dense(n_in, 500, sigmoid), Dense(500, n_out))),
+                    batch_size = 1000,
+                    epochs = 100),
+                    select(drop.train[:,:], Not(:precipitation_nextday)), 
+                    drop.train.precipitation_nextday) |> fit!
+mean(predict_mode(m_mlp, select(drop.test[:,:], Not(:precipitation_nextday))) .!= drop.test.precipitation_nextday)
+auc_m = MLJ.auc(predict(m_mlp, select(drop.test[:,:], Not(:precipitation_nextday))), drop.test.precipitation_nextday)
+
+m_mlp = machine(NeuralNetworkClassifier(
+                    builder = MLJFlux.@builder(Chain(Dense(n_in, 500, sigmoid), Dense(500, n_out))),
+                    optimiser = ADAMW(),
+                    batch_size = 2117,
+                    epochs = 100),
+                    select(med.train[:,:], Not(:precipitation_nextday)), 
+                    med.train.precipitation_nextday) |> fit!
+mean(predict_mode(m_mlp, select(med.test[:,:], Not(:precipitation_nextday))) .!= med.test.precipitation_nextday)
+auc_m = MLJ.auc(predict(m_mlp, select(med.test[:,:], Not(:precipitation_nextday))), med.test.precipitation_nextday)
+
+
+
+
+#doesn't work and I can't figure out why
 """
-mean(predict_mode(m_mlp, test_input) .!= test_output)
-
-
-
-model = @pipeline(Standardizer(),
-                       NeuralNetworkClassifier(
-                             builder = MLJFlux.Short(n_hidden = 150,
-                                                     σ = sigmoid),
-                             optimiser = ADAM(),
-                             batch_size = 32),
-                             target = Standardizer())
-
-tuned_model = TunedModel(model = model,
-							  resampling = CV(nfolds = 5),
-	                          range = [range(model,
-						                :(neural_network_classifier.builder.dropout),
-									    values = [0., .1, .2]),
-								       range(model,
-									     :(neural_network_classifier.epochs),
-									     values = [500, 1000, 2000])],
-	                          measure = auc)
-
-mach = fit!(machine(tuned_model,
-	                     train_input,
-		                 train_output))
+m_h = machine(NeuralNetworkClassifier(
+                    builder = MLJFlux.MLP(hidden=(10,)), #3 hidden layers with 10 neurons each
+                    batch_size = 1200,
+                    epochs = 100),
+                    select(drop.train[:,:], Not(:precipitation_nextday)), 
+                    drop.train.precipitation_nextday) |> fit!
+mean(predict_mode(m_h, select(drop.test[:,:], Not(:precipitation_nextday))) .!= drop.test.precipitation_nextday)
+auc_mh = MLJ.auc(predict(m_h, select(drop.test[:,:], Not(:precipitation_nextday))), drop.test.precipitation_nextday)
 """
 
-drop_all, drop_std_all = generate_all(train_data, "drop");
-best_mach = machine(NeuralNetworkClassifier(builder = MLJFlux.Short(n_hidden = 2000, dropout = 0.1, σ = sigmoid),
-      batch_size = 3000, epochs = 200), select(drop_all[:,:], Not(:precipitation_nextday)), drop_all.precipitation_nextday) |> fit!;
-pred = pdf.(predict(best_mach, test_data), true)
-example_submission.precipitation_nextday = pred
-CSV.write(joinpath(@__DIR__,"MLP_submission.csv"), example_submission)
+
