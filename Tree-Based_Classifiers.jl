@@ -10,7 +10,8 @@ coerce!(test_data, :precipitation_nextday => Multiclass);
 
 example_submission = CSV.read(joinpath(@__DIR__, "data", "sample_submission.csv"), DataFrame);
 
-drop, med = generate(train_data, "false");
+drop = generate(train_data, option = "drop", valid = "false", test = "true");
+med = generate(train_data, option = "med", valid = "false", test = "true");
 
 
 #-------------------------------------------------------------------------------#
