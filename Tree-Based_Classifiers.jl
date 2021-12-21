@@ -60,10 +60,10 @@ function TunedModel_XGB(data)
     self_tuning_model = TunedModel(model = model_xgb,
                                 resampling = CV(nfolds = 6),
                                 tuning = Grid(goal = 20),
-                                range = [range(xgb, :eta,
+                                range = [range(model_xgb, :eta,
                                         lower = 1e-4, upper = .1, scale = :log),
-                                 range(xgb, :num_round, lower = 50, upper = 500),
-                                 range(xgb, :max_depth, lower = 2, upper = 6)],
+                                 range(model_xgb, :num_round, lower = 50, upper = 500),
+                                 range(model_xgb, :max_depth, lower = 2, upper = 6)],
                                 measure = auc)
     self_tuning_mach = machine(self_tuning_model,
                             select(data.train, Not(:precipitation_nextday)),
@@ -72,9 +72,9 @@ function TunedModel_XGB(data)
 end
 
 #better with med than drop
-#rep1 = report(TunedModel_XGB(drop))
+rep1 = report(TunedModel_XGB(drop))
 rep2 = report(TunedModel_XGB(med))
-#rep1.best_history_entry.measurement
+rep1.best_history_entry.measurement
 rep2.best_history_entry.measurement
 
 
