@@ -47,14 +47,13 @@ best_mach2 = machine(KNNClassifier(K = rep2.best_model.K), select(med.train[:,:]
 losses(best_mach1, select(drop.test, Not(:precipitation_nextday)), drop.test.precipitation_nextday)
 losses(best_mach2, select(med.test, Not(:precipitation_nextday)), med.test.precipitation_nextday)
 
-
 #Show the different AUC in function of the hyperparameters.
 scatter(reshape(rep2.plotting.parameter_values, :), rep2.plotting.measurements, xlabel = "K", ylabel = "AUC")
 
 #Write in the submission file with a machine trained on all data
-med_all = generate(train_data, option = "med", valid = "false", test = "false");
-med_all
-best_mach = machine(KNNClassifier(K = rep2.best_model.K), select(med_all[:,:], Not(:precipitation_nextday)), med_all.precipitation_nextday)|> fit!
+tot = generate(train_data, option = "med", valid = "false", test = "false");
+tot
+best_mach = machine(KNNClassifier(K = rep2.best_model.K), select(tot[:,:], Not(:precipitation_nextday)), tot.precipitation_nextday)|> fit!
 
 #To 
 pred = pdf.(predict(best_mach, test_data), true)
