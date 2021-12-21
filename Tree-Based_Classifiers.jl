@@ -29,7 +29,7 @@ function TunedModel_forest(data)
     self_tuning_model = TunedModel(model = model_forest,
                                 resampling = CV(nfolds = 6),
                                 tuning = Grid(),
-                                range = range(model_forest, :n_trees, values = 400:700),
+                                range = range(model_forest, :n_trees, lower = 100, upper = 1000, scale = :log),
                                 measure = auc)
     self_tuning_mach = machine(self_tuning_model,
                             select(data.train, Not(:precipitation_nextday)),
