@@ -84,12 +84,10 @@ end
 
 model = XGBoostClassifier()
 
-train_data = CSV.read(joinpath(@__DIR__, "data", "trainingdata.csv"), DataFrame);
 drop = generate(train_data, option = "drop", valid = "false", test = "true");
 rep1 = report(TunedModel_XGB(drop.train))
 rep1.best_history_entry.measurement
 
-train_data = CSV.read(joinpath(@__DIR__, "data", "trainingdata.csv"), DataFrame);
 med = generate(train_data, option = "med", valid = "false", test = "true");
 rep2 = report(TunedModel_XGB(med.train))
 rep2.best_history_entry.measurement
