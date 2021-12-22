@@ -49,10 +49,10 @@ AUC_drop = MLJ.auc(predict(rep.best_model, select(drop.test[:,:], Not(:precipita
 drop = generate(option = "drop", std = "true", valid = "false", test = "true");
 
 #Fourth attempt
-NN_4 = machine(NeuralNetworkClassifier(builder = MLJFlux.Short(n_hidden = 1000, dropout = 0.1, σ = relu),
-                                                batch_size = 1500, epochs = 300), 
+NN_4 = machine(NeuralNetworkClassifier(builder = MLJFlux.Short(n_hidden = 200, dropout = 0.1, σ = relu),
+                                                batch_size = 1000, epochs = 1000), 
                                                 select(drop.train[:,:], Not(:precipitation_nextday)),
-                                                drop.train.precipitation_nextday) |> fit!;
-
+                                                drop.train.precipitation_nextday);
+fit!(NN_4, verbosity = 2)
 AUC_drop = MLJ.auc(predict(NN_4, select(drop.test[:,:], Not(:precipitation_nextday))), drop.test.precipitation_nextday)
 # D&S = 0.916
