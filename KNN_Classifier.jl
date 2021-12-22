@@ -4,13 +4,10 @@ using Plots, CSV, MLJ, DataFrames, Random, NearestNeighborModels
 include("./Data_Processing.jl")
 
 #Load the data
-train_data = CSV.read(joinpath(@__DIR__, "data", "trainingdata.csv"), DataFrame);
 test_data = CSV.read(joinpath(@__DIR__, "data", "testdata.csv"), DataFrame);
 example_submission = CSV.read(joinpath(@__DIR__, "data", "sample_submission.csv"), DataFrame);
-
-drop = generate(train_data, option = "drop", valid = "false", test = "true");
-med = generate(train_data, option = "med", valid = "false", test = "true");
-
+drop = generate(option = "drop", std = "false", valid = "false", test = "true");
+med = generate(option = "med", std = "false", valid = "false", test = "true");
 
 #Function to tune the model
 function TunedModel_KNN(data)
@@ -39,16 +36,16 @@ rep2.best_model.K
 #Show the different AUC in function of the hyperparameters.
 scatter(reshape(rep2.plotting.parameter_values, :), rep2.plotting.measurements, xlabel = "K", ylabel = "AUC")
 
+# Drop is computed with K=27 and Med is computed with K=25
 best_mach1 = machine(KNNClassifier(K = rep1.best_model.K), select(drop.train[:,:], Not(:precipitation_nextday)), drop.train.precipitation_nextday)|> fit!
 best_mach2 = machine(KNNClassifier(K = rep2.best_model.K), select(med.train[:,:], Not(:precipitation_nextday)), med.train.precipitation_nextday)|> fit!
 
 losses(best_mach1, select(drop.test, Not(:precipitation_nextday)), drop.test.precipitation_nextday)
 losses(best_mach2, select(med.test, Not(:precipitation_nextday)), med.test.precipitation_nextday)
 
-
-#Write in the submission file with a machine trained on all data
-tot = generate(train_data, option = "med", valid = "false", test = "false");
-best_mach = machine(KNNClassifier(K = rep2.best_model.K), select(tot[:,:], Not(:precipitation_nextday)), tot.precipitation_nextday)|> fit!
+#Write in the submission file with a machine trained on all data, Drop data set and K=27 seems to have the highest AUC on the test data
+tot = generate(option = "drop", valid = "false", test = "false");
+best_mach = machine(KNNClassifier(K = rep1.best_model.K), select(tot[:,:], Not(:precipitation_nextday)), tot.precipitation_nextday)|> fit!
 
 pred = pdf.(predict(best_mach, test_data), true)
 example_submission.precipitation_nextday = pred
