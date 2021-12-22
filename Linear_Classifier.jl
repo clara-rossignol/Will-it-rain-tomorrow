@@ -10,6 +10,10 @@ example_submission = CSV.read(joinpath(@__DIR__, "data", "sample_submission.csv"
 drop = generate(train_data, option = "drop", valid = "false", test = "true");
 med = generate(train_data, option = "med", valid = "false", test = "true");
 
+drop_train_std = MLJ.transform(fit!(machine(Standardizer(), drop.train)),drop.train)
+drop_test_std = MLJ.transform(fit!(machine(Standardizer(), drop.test)),drop.test)
+med_train_std = MLJ.transform(fit!(machine(Standardizer(), med.train)),med.train)
+med_test_std = MLJ.transform(fit!(machine(Standardizer(), med.test)),med.test)
 
 # Test if the predictor is better fitted on drop or median data
 mach_drop = machine(LogisticClassifier(), select(drop.train[:,:], Not(:precipitation_nextday)), drop.train.precipitation_nextday) |> fit!;
@@ -60,6 +64,20 @@ best_mach = machine(LogisticClassifier(lambda = rep2.best_model.lambda), select(
 pred = pdf.(predict(best_mach, test_data), true)
 example_submission.precipitation_nextday = pred
 CSV.write(joinpath(@__DIR__,"Linear_submission.csv"), example_submission)
+
+
+#-------------------------------------------------------------------------------#
+#With standardized data
+
+rep1_std = report(TunedModel_Reg(drop_train_std))
+rep1_std.best_history_entry.measurement
+rep1_std.best_model.lambda
+scatter(reshape(rep1_std.plotting.parameter_values, :), rep1_std.plotting.measurements, xlabel = "Lamba", ylabel = "AUC")
+
+rep2_std = report(TunedModel_Reg(med_train_std))
+rep2_std.best_history_entry.measurement
+rep2_std.best_model.lambda
+scatter(reshape(rep2_std.plotting.parameter_values, :), rep2_std.plotting.measurements, xlabel = "Lamba", ylabel = "AUC")
 
 
 
