@@ -15,25 +15,49 @@ end
 # ╔═╡ 97101f45-c447-4fd1-bbfd-d4fead047118
 md"
 # Will it rain tomorrow ?
-This notebook shows how we dealt with the data we were given for the project. There are some plots helping to visualize the data and how we transformed our input data.
+This notebook shows how we dealt with the training data set given for the project [Will it rain tomorrow ?](https://www.kaggle.com/c/bio322-will-it-rain-tomorrow).
+We propose some plots of the data and the transformation we used in our models.
+
+First we need to load the necessary packages. We used the MLCourse env in order to access the packages.
+"
+
+# ╔═╡ 75c3f94d-8d0a-4f6f-ab50-41e46541c3d8
+md"
+Then we load the data sets;
+1. The training data set
+2. The test data set
 "
 
 # ╔═╡ fbd4c00b-9ffe-4656-a98b-09cc80bf4e58
 begin
 	training_data = CSV.read(joinpath(@__DIR__, "data", "trainingdata.csv"), DataFrame);
-	test_data = CSV.read(joinpath(@__DIR__, "data", "testdata.csv"), DataFrame);
-	
 	coerce!(training_data, :precipitation_nextday => Multiclass);
-	coerce!(test_data, :precipitation_nextday => Multiclass);
 end
+
+# ╔═╡ 29b461df-effd-4e0d-8d48-56e63c07913d
+begin
+	test_data = CSV.read(joinpath(@__DIR__, "data", "testdata.csv"), DataFrame);
+end
+
+# ╔═╡ 19d596c6-3101-41ff-bc21-510a69d8e07d
+
 
 # ╔═╡ 0d8b1166-b9c8-44ae-abfa-9060e9a7dd33
 md"
-We can see that out training data consists of 3176 rows and 529 columns. We have 528 predictors in order to predict the 529th column, whether or not it is raining the next day in Pully called :precipitation_nextday.
+We can see that out training data consists of 3176 rows and 529 columns. We have 528 predictors in order to predict the 529th column, whether or not it is raining the next day in Pully called :precipitation\_nextday.
+The test is then composed only by the 528 predictors with different data points. We can then use this data set top predict the :precipitation\_nextday output using our models.
 "
 
 # ╔═╡ cb8b6542-1ec9-41a2-8508-bb7acc944e32
 size(training_data)
+
+# ╔═╡ ef87c1fb-eaa1-459b-b610-737259a34586
+size(test_data)
+
+# ╔═╡ ebdf399c-72f4-4aee-92b2-08727423d174
+md"
+We can use the function describe(::DataFrames) in order to assess the first properties of each predictor. This can help us to find the predictor with mean and std equal to 0 which will be a problem when standardizing
+"
 
 # ╔═╡ 1b27bf59-2f01-4802-bac9-c325ba1681c3
 describe(training_data)
@@ -177,9 +201,14 @@ end
 # ╔═╡ Cell order:
 # ╟─97101f45-c447-4fd1-bbfd-d4fead047118
 # ╠═b0ded90e-6283-11ec-0039-2de048031f30
+# ╟─75c3f94d-8d0a-4f6f-ab50-41e46541c3d8
 # ╠═fbd4c00b-9ffe-4656-a98b-09cc80bf4e58
+# ╠═29b461df-effd-4e0d-8d48-56e63c07913d
+# ╠═19d596c6-3101-41ff-bc21-510a69d8e07d
 # ╟─0d8b1166-b9c8-44ae-abfa-9060e9a7dd33
 # ╠═cb8b6542-1ec9-41a2-8508-bb7acc944e32
+# ╠═ef87c1fb-eaa1-459b-b610-737259a34586
+# ╟─ebdf399c-72f4-4aee-92b2-08727423d174
 # ╠═1b27bf59-2f01-4802-bac9-c325ba1681c3
 # ╟─81fb7d32-24dc-460b-85df-aecdd8263e91
 # ╟─c31e9d13-c4fe-4350-9fdf-3ca7450799d9
