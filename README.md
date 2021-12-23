@@ -40,4 +40,19 @@ For each type of model we tried, we implemented a .jl file named with the type o
 - We generate the .csv file in the results folder.
 
 
+---------------------------------
+Runing the visualization notebook
+---------------------------------
+In order to run the Pluto notebook "Visualization_Notebook.jl" one must download [julia](https://julialang.org/downloads) (at least version 1.6.2) and open the julia terminal.
+
+```julia
+julia> using Pkg
+       Pkg.activate(joinpath(Pkg.devdir(), "MLCourse"))
+       using MLCourse
+       using Pluto
+       Pluto.run(notebook = "path_to_notebook")
+```
+
+
+
 ![](https://www.epfl.ch/wp/5.5/wp-content/themes/wp-theme-2018/assets/svg/epfl-logo.svg)
