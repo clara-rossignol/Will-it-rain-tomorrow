@@ -42,15 +42,15 @@ rep4 = report(TunedModel_XGB(med.train));
 rep4.best_history_entry.measurement #AUC for dropped, non standardized data 0.9297; best hyper-parameters being eta = 0.1, num_round = 310, max_depth = 6
 
 
-# Test the best model over the test set with the best hyper-parameters to pick the best one:
+#Test the best model over the test set with the best hyper-parameters to pick the best one:
 best_mach1 = machine(XGBoostClassifier(eta = rep1.best_model.eta, num_round = rep1.best_model.num_round, max_depth = rep1.best_model.max_depth), select(drop_std.train[:,:], Not(:precipitation_nextday)), drop_std.train.precipitation_nextday)|> fit!
 best_mach2 = machine(XGBoostClassifier(eta = rep2.best_model.eta, num_round = rep2.best_model.num_round, max_depth = rep2.best_model.max_depth), select(med_std.train[:,:], Not(:precipitation_nextday)), med_std.train.precipitation_nextday)|> fit!
 best_mach3 = machine(XGBoostClassifier(eta = rep3.best_model.eta, num_round = rep3.best_model.num_round, max_depth = rep3.best_model.max_depth), select(drop.train[:,:], Not(:precipitation_nextday)), drop.train.precipitation_nextday)|> fit!
 best_mach4 = machine(XGBoostClassifier(eta = rep4.best_model.eta, num_round = rep4.best_model.num_round, max_depth = rep4.best_model.max_depth), select(med.train[:,:], Not(:precipitation_nextday)), med.train.precipitation_nextday)|> fit!
-AUC1 = losses(best_mach1, select(drop_std.test, Not(:precipitation_nextday)), drop_std.test.precipitation_nextday)
-AUC2 = losses(best_mach2, select(med_std.test, Not(:precipitation_nextday)), med_std.test.precipitation_nextday)
-AUC3 = losses(best_mach1, select(drop.test, Not(:precipitation_nextday)), drop.test.precipitation_nextday)
-AUC4 = losses(best_mach2, select(med.test, Not(:precipitation_nextday)), med.test.precipitation_nextday)
+losses(best_mach1, select(drop_std.test, Not(:precipitation_nextday)), drop_std.test.precipitation_nextday)
+losses(best_mach2, select(med_std.test, Not(:precipitation_nextday)), med_std.test.precipitation_nextday)
+losses(best_mach3, select(drop.test, Not(:precipitation_nextday)), drop.test.precipitation_nextday)
+losses(best_mach4, select(med.test, Not(:precipitation_nextday)), med.test.precipitation_nextday)
 
 #med with standardized data seems to perform the best
 
