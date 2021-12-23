@@ -6,7 +6,9 @@ function generate(; option = "drop", std = "false", valid = "true", test = "true
 
     data = CSV.read(joinpath(@__DIR__, "data", "trainingdata.csv"), DataFrame);
     test_all = CSV.read(joinpath(@__DIR__, "data", "testdata.csv"), DataFrame)
+    
     Random.seed!(2809)
+    
     if option == "drop"
         new_data = dropmissing(data);
         coerce!(new_data, :precipitation_nextday => Multiclass);
@@ -105,6 +107,7 @@ function generate(; option = "drop", std = "false", valid = "true", test = "true
     end
 end
 
+#Commonly used losses for binary classification
 function losses(machine, input, response)
     (loglikelihood = -sum(log_loss(predict(machine, input), response)),
      misclassification_rate = mean(predict_mode(machine, input) .!= response),
