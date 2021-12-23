@@ -30,7 +30,7 @@ end
 
 #Test the tuned model on the drop data set and med data set with both standardized and not-standardized data:
 rep1 = report(TunedModel_XGB(drop_std.train));
-rep1.best_history_entry.measurement #AUC for dropped, standardized data ; best hyper-parameters being eta = , num_round = , max_depth = 
+rep1.best_history_entry.measurement 
 
 rep2 = report(TunedModel_XGB(med_std.train));
 rep2.best_history_entry.measurement #AUC for med, standardized data 0.93; best hyper-parameters being eta = 0.1, num_round = 500, max_depth = 6
