@@ -25,3 +25,5 @@ Manifest.toml
 results/KNN_submission.csv
 results/Linear_submission.csv
 results/MLP_submission.csv
+results/XGBoost_submission.csv
+results/RandomForest_submission.csv
