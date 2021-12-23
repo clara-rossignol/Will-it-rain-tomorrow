@@ -1,6 +1,6 @@
 # Will it rain tomorrow?
 
-## Introduction:
+## Introduction
 This repository contains a machine learning approach to solve the "Will it rain tomorrow ?" problem. The task is to predict whether there will be some precipitation (rain, snow etc.) on the next day in Pully given some measurements at different weather stations in Switzerland.
 
 The repository is constituted of:
@@ -53,6 +53,8 @@ julia> using Pkg
        Pluto.run(notebook = "path_to_notebook")
 ```
 
+## Authors
+Oscar Henry, Clara Rossignol
 
 
 ![](https://www.epfl.ch/wp/5.5/wp-content/themes/wp-theme-2018/assets/svg/epfl-logo.svg)
