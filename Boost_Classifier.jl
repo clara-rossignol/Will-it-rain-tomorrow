@@ -30,16 +30,16 @@ end
 
 #Test the tuned model on the drop data set and med data set with both standardized and not-standardized data:
 rep1 = report(TunedModel_XGB(drop_std.train));
-rep1.best_history_entry.measurement
+rep1.best_history_entry.measurement #AUC for dropped, standardized data ; best hyper-parameters being eta = , num_round = , max_depth = 
 
 rep2 = report(TunedModel_XGB(med_std.train));
-rep2.best_history_entry.measurement
+rep2.best_history_entry.measurement #AUC for med, standardized data 0.93; best hyper-parameters being eta = 0.1, num_round = 500, max_depth = 6
 
 rep3 = report(TunedModel_XGB(drop.train));
 rep3.best_history_entry.measurement #AUC for dropped, non standardized data 0.9176; best hyper-parameters being eta = 0.1, num_round = 400, max_depth = 4
 
 rep4 = report(TunedModel_XGB(med.train));
-rep4.best_history_entry.measurement #AUC for dropped, non standardized data 0.9297; best hyper-parameters being eta = 0.1, num_round = 310, max_depth = 6
+rep4.best_history_entry.measurement #AUC for med, non standardized data 0.9297; best hyper-parameters being eta = 0.1, num_round = 310, max_depth = 6
 
 
 #Test the best model over the test set with the best hyper-parameters to pick the best one:
@@ -58,7 +58,7 @@ losses(best_mach4, select(med.test, Not(:precipitation_nextday)), med.test.preci
 #Write in the submission file with the best machine trained on all data
 train, test = generate(option = "med", std = "true", valid = "false", test = "false");
 best_mach = machine(XGBoostClassifier(eta = rep2.best_model.eta, num_round = rep2.best_model.num_round, max_depth = rep2.best_model.max_depth), select(train[:,:], Not(:precipitation_nextday)), train.precipitation_nextday)|> fit!
-sample = CSV.read(joinpath(@__DIR__, "data", "sample_submission.csv"), DataFrame);m
+sample = CSV.read(joinpath(@__DIR__, "data", "sample_submission.csv"), DataFrame);
 pred = pdf.(predict(best_mach, test), true);
 sample.precipitation_nextday = pred;
-CSV.write(joinpath(@__DIR__, "results", "XGBoost_submission.csv"), sample);
+CSV.write(joinpath(@__DIR__,"results","XGBoost_submission.csv"), sample);

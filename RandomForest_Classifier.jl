@@ -1,6 +1,6 @@
 using Pkg
 Pkg.activate(joinpath(Pkg.devdir(), "MLCourse"))
-using MLCourse, CSV, MLJ, DataFrames, MLJLinearModels, Random, Flux, MLJFlux, MLJXGBoostInterface, MLJDecisionTreeInterface
+using Plots, MLCourse, CSV, MLJ, DataFrames, MLJLinearModels, Random, Flux, MLJFlux, MLJXGBoostInterface, MLJDecisionTreeInterface
 include("./Data_Processing.jl")
 
 #Load the data
@@ -10,21 +10,23 @@ drop = generate(option = "drop", std = "false", valid = "false", test = "true");
 med = generate(option = "med", std = "false", valid = "false", test = "true");
 
 #Random Forest Classifier
-m_forest_drop = machine(RandomForestClassifier(n_trees = 500), select(drop.train[:,:], Not(:precipitation_nextday)), drop.train.precipitation_nextday) |> fit!
-m_forest_med = machine(RandomForestClassifier(n_trees = 1000), select(med.train[:,:], Not(:precipitation_nextday)), med.train.precipitation_nextday) |> fit!
+m_forest_drop = machine(RandomForestClassifier(n_trees = 500), select(drop.train[:,:], Not(:precipitation_nextday)), drop.train.precipitation_nextday) |> fit! 
+m_forest_med = machine(RandomForestClassifier(n_trees = 1200), select(med.train[:,:], Not(:precipitation_nextday)), med.train.precipitation_nextday) |> fit!
 m_forest_drop_std = machine(RandomForestClassifier(n_trees = 500), select(drop_std.train[:,:], Not(:precipitation_nextday)), drop_std.train.precipitation_nextday) |> fit!
-m_forest_med_std = machine(RandomForestClassifier(n_trees = 1000), select(med_std.train[:,:], Not(:precipitation_nextday)), med_std.train.precipitation_nextday) |> fit!
+m_forest_med_std = machine(RandomForestClassifier(n_trees = 1200), select(med_std.train[:,:], Not(:precipitation_nextday)), med_std.train.precipitation_nextday) |> fit!
 
-auc_forest_drop = MLJ.auc(predict(m_forest_drop, select(drop.test[:,:], Not(:precipitation_nextday))), drop.test.precipitation_nextday) # 0.917
-auc_forest_med = MLJ.auc(predict(m_forest_med, select(med.test[:,:], Not(:precipitation_nextday))), med.test.precipitation_nextday) # 0.919
-auc_forest_drop_std = MLJ.auc(predict(m_forest_drop_std, select(drop_std.test[:,:], Not(:precipitation_nextday))), drop_std.test.precipitation_nextday) # 
-auc_forest_med_std = MLJ.auc(predict(m_forest_med_std, select(med_std.test[:,:], Not(:precipitation_nextday))), med_std.test.precipitation_nextday) # 
+auc_forest_drop = MLJ.auc(predict(m_forest_drop, select(drop.test[:,:], Not(:precipitation_nextday))), drop.test.precipitation_nextday) # 0.909
+auc_forest_med = MLJ.auc(predict(m_forest_med, select(med.test[:,:], Not(:precipitation_nextday))), med.test.precipitation_nextday) # 0.927
+auc_forest_drop_std = MLJ.auc(predict(m_forest_drop_std, select(drop_std.test[:,:], Not(:precipitation_nextday))), drop_std.test.precipitation_nextday) # 0.908
+auc_forest_med_std = MLJ.auc(predict(m_forest_med_std, select(med_std.test[:,:], Not(:precipitation_nextday))), med_std.test.precipitation_nextday) # 0.926
 
 
-#The Med data set seems to have the best AUC ??????
+#The med data seems to have the best AUC (not a big difference between standardized or not)
 
 
 function TunedModel_forest(data)
+    Random.seed!(2711)
+    model = RandomForestClassifier()
     self_tuning_model = TunedModel(model = model,
                                 resampling = CV(nfolds = 5),
                                 tuning = Grid(),
@@ -70,7 +72,6 @@ losses(best_mach2, select(med_std.test, Not(:precipitation_nextday)), med_std.te
 losses(best_mach3, select(drop.test, Not(:precipitation_nextday)), drop.test.precipitation_nextday)
 losses(best_mach4, select(med.test, Not(:precipitation_nextday)), med.test.precipitation_nextday)
 
-#à changer voir si mieux avec std ou pas
 
 #Write in the submission file with the best machine trained on all data
 train, test = generate(option = "med", std = "true", valid = "false", test = "false");

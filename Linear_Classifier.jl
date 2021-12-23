@@ -15,8 +15,8 @@ losses(mach_med, select(med.test[:,:], Not(:precipitation_nextday)), med.test.pr
 # AUC_drop = 0.786, AUC_med = 0.880
 
 #Function to tune the model with L1 and L2 regularization with log scaled lambda values
-Random.seed!(2711)
 function TunedModel_L2(data)
+	Random.seed!(2711)
 	model = LogisticClassifier(penalty = :l2)
 	self_tuning_model = TunedModel(model = model,
 	                         resampling = CV(nfolds = 10),
