@@ -11,7 +11,7 @@ The repository is constituted of:
 - A license.
 - A .gitignore in order to avoid IDE originating files and results files.
 - A .toml file with all the necessary packages needed to run the code.
-- A report where we review in more detail each part of the project and talk a bit about the problem and datasets.
+- A report where we review in more detail each part of the project and talk a bit about the problem and datasets. The report is under the .pdf format.
 
 
 ------------------
