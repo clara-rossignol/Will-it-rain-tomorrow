@@ -3,9 +3,9 @@
 ## Introduction:
 This repository contains a machine learning approach to solve the "Will it rain tomorrow ?" problem. The task is to predict whether there will be some precipitation (rain, snow etc.) on the next day in Pully given some measurements at different weather stations in Switzerland.
 
-The repository is constitued of:
+The repository is constituted of:
 - A data folder with the three datasets of the problem.
-- A results folder where the sumbissions will appear when running the code. The submissions are under the .csv format.
+- A results folder where the submissions will appear when running the code. The submissions are under the .csv format.
 - A visualization Pluto notebook where we explore the data.
 - Multiple .jl files for each type of model built in order to solve this problem. In each .jl file you can observe how we processed in order to develop our best model for a particular type of model.
 - A license.
@@ -18,7 +18,7 @@ The repository is constitued of:
 Data_Processing.jl
 ------------------
 
-When using multiple ML methods, the data has to undergo multiple changes. It is rapidly confusing to execute every time every transformation. In order to solve this problem, we implemented a generate(; option, std, valid, test) function. This function has many modes which are:
+When using multiple ML methods, the data must undergo multiple changes. It is rapidly confusing to execute every time every transformation. In order to solve this problem, we implemented a generate(; option, std, valid, test) function. This function has many modes which are:
 - option = "drop" or "med": the first option will drop the rows containing missing data and the second will fill out the missing data with the median of the predictor.
 - std = "false" or "true": the returned data is standardized or not.
 - valid = "true" or "false": the returned data contains a training set, a validation set and a test set. We add automatically a test set because the other case is equivalent to putting test = "true" (see next arg description).
