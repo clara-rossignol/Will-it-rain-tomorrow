@@ -27,7 +27,7 @@ MLJ.auc(predict(NN_1, select(drop_std.test[:,:], Not(:precipitation_nextday))), 
 Random.seed!(2711)
 model = NeuralNetworkClassifier( builder = MLJFlux.Short(n_hidden = 100, dropout = 0.1, σ = relu),
     epochs = 100,
-    batch_size = 1000);
+    batch_size = 100);
 
 result=[];
 for _ in 1:10 #Change the second number if you want to try some changes
@@ -35,13 +35,13 @@ for _ in 1:10 #Change the second number if you want to try some changes
     fit!(NN_2)
     AUC_drop = MLJ.auc(predict(NN_2, select(drop_std.test[:,:], Not(:precipitation_nextday))), drop_std.test.precipitation_nextday)
     push!(result, AUC_drop)
-    model.builder.n_hidden = model.builder.n_hidden + 10
+    model.batch_size = model.batch_size + 100
 end
-scatter(1:10, result, ylims = [0.8, 1.])
+scatter(1:10, result, ylims = [0.9, 0.95])
 
 # Best model found in the previous part
 Random.seed!(2711)
-best_model = NeuralNetworkClassifier( builder = MLJFlux.Short(n_hidden = 200, dropout = 0.1, σ = relu),
+best_model = NeuralNetworkClassifier( builder = MLJFlux.Short(n_hidden = 100, dropout = 0.1, σ = relu),
     epochs = 100,
     batch_size = 1000)
 best_NN = machine(best_model, select(drop_std.train, Not(:precipitation_nextday)), drop_std.train.precipitation_nextday)
