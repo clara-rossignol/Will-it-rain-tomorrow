@@ -1,10 +1,10 @@
 # Will it rain tomorrow?
 
 ## Introduction
-This repository contains a machine learning approach to solve the "Will it rain tomorrow ?" problem. The task is to predict whether there will be some precipitation (rain, snow etc.) on the next day in Pully given some measurements at different weather stations in Switzerland.
+This repository contains a machine learning approach to solve the "Will it rain tomorrow ?" problem. The task is to predict whether there will be some precipitation (rain, snow etc.) during the next day in Pully given some measurements at different weather stations in Switzerland.
 
 The repository is constituted of:
-- A data folder with the three datasets of the problem.
+- A data folder with three datasets from the problem; A training set, a test set to make prediction, and a example of a submission file.
 - A results folder where the submissions will appear when running the code. The submissions are under the .csv format.
 - A visualization Pluto notebook where we explore the data.
 - Multiple .jl files for each type of model built in order to solve this problem. In each .jl file you can observe how we processed in order to develop our best model for a particular type of model.
