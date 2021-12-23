@@ -41,8 +41,8 @@ scatter(1:10, result, ylims = [0.9, 0.95])
 
 # Best model found in the previous part
 Random.seed!(2711)
-best_model = NeuralNetworkClassifier( builder = MLJFlux.Short(n_hidden = 100, dropout = 0.1, σ = relu),
-    epochs = 100,
+best_model = NeuralNetworkClassifier( builder = MLJFlux.Short(n_hidden = 200, dropout = 0.1, σ = relu),
+    epochs = 300,
     batch_size = 1000)
 best_NN = machine(best_model, select(drop_std.train, Not(:precipitation_nextday)), drop_std.train.precipitation_nextday)
 fit!(best_NN, verbosity = 2)
