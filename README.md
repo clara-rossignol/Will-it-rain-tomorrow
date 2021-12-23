@@ -18,7 +18,7 @@ The repository is constituted of:
 Data_Processing.jl
 ------------------
 
-When using multiple ML methods, the data must undergo multiple changes. It is rapidly confusing to execute every time every transformation. In order to solve this problem, we implemented a generate(; option, std, valid, test) function. This function has many modes which are:
+When using multiple ML methods, the data must undergo multiple changes. It is rapidly confusing to execute every time each transformation. In order to solve this problem, we implemented a generate(; option, std, valid, test) function. This function has many modes:
 - option = "drop" or "med": the first option will drop the rows containing missing data and the second will fill out the missing data with the median of the predictor.
 - std = "false" or "true": the returned data is standardized or not.
 - valid = "true" or "false": the returned data contains a training set, a validation set and a test set. We add automatically a test set because the other case is equivalent to putting test = "true" (see next arg description).
