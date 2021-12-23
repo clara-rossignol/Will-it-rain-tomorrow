@@ -19,10 +19,10 @@ Data_Processing.jl
 ------------------
 
 When using multiple ML methods, the data must undergo multiple changes. It is rapidly confusing to execute every time each transformation. In order to solve this problem, we implemented a generate(; option, std, valid, test) function. This function has many modes:
-- option = "drop" or "med": the first option will drop the rows containing missing data and the second will fill out the missing data with the median of the predictor.
-- std = "false" or "true": the returned data is standardized or not.
-- valid = "true" or "false": the returned data contains a training set, a validation set and a test set. We add automatically a test set because the other case is equivalent to putting test = "true" (see next arg description).
-- test = "true" or "false": the returned data contains a training and a test set.
+- option::string = "drop" or "med": the first arg will drop the rows containing missing data and the second will fill out the missing data with the median of the predictor.
+- std::string = "false" or "true": the returned data is standardized or not.
+- valid::string = "true" or "false": the returned data contains a training set, a validation set and a test set. We add automatically a test set because the other case is equivalent to putting test = "true" (see next arg description).
+- test::string = "true" or "false": the returned data contains a training and a test set.
 
 Special scenario: in order to train every model on the full training set and make predictions on the test set, we need to transform both sets with the same machine, for example when using standardization. When using this combination of arg generate(; option, std, valid = "false", test = "false") and any value for option and std, the function returns the training and test set transformed with the same machine in order to train a given model on the full training set and to predict with this model on the test set.
 
