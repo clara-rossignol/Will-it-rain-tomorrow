@@ -3,10 +3,10 @@ Pkg.activate(joinpath(Pkg.devdir(), "MLCourse"))
 using CSV, MLJ, DataFrames, Random
 
 function generate(; option = "drop", std = "false", valid = "true", test = "true")
-    Random.seed!(2809)
 
     data = CSV.read(joinpath(@__DIR__, "data", "trainingdata.csv"), DataFrame);
-
+    test_all = CSV.read(joinpath(@__DIR__, "data", "testdata.csv"), DataFrame)
+    Random.seed!(2809)
     if option == "drop"
         new_data = dropmissing(data);
         coerce!(new_data, :precipitation_nextday => Multiclass);
@@ -19,11 +19,9 @@ function generate(; option = "drop", std = "false", valid = "true", test = "true
             new_data = MLJ.transform(std_mach, select(new_data, Not([:ZER_sunshine_1, :ALT_sunshine_4])))
             if valid == "true"
                 if test == "true"
-                    #If valid is true then a test set is also creater
                     new_data = (train = new_data[idxs[idx[1]:idx[2]], :], valid = new_data[idxs[idx[2]:idx[3]], :], test = new_data[idxs[idx[3]:idx[4]], :]);
                     new_data
                 else
-                    "We do not provide a validation set without a test set, look at your arg."
                     new_data = DataFrame()
                     new_data
                 end
@@ -32,18 +30,16 @@ function generate(; option = "drop", std = "false", valid = "true", test = "true
                     new_data = (train = new_data[idxs[idx[1]:idx[3]], :], test = new_data[idxs[idx[3]:idx[4]], :]);
                     new_data
                 else
-                    "Full set transformed"
-                    new_data
+                    new_test = MLJ.transform(std_mach, select(test_all, Not([:ZER_sunshine_1, :ALT_sunshine_4])));
+                    new_data, new_test
                 end
             end
         else
             if valid == "true"
                 if test == "true"
-                    #If valid is true then a test set is also creater
                     new_data = (train = new_data[idxs[idx[1]:idx[2]], :], valid = new_data[idxs[idx[2]:idx[3]], :], test = new_data[idxs[idx[3]:idx[4]], :]);
                     new_data
                 else
-                    "We do not provide a validation set without a test set, look at your arg."
                     new_data = DataFrame()
                     new_data
                 end
@@ -52,8 +48,7 @@ function generate(; option = "drop", std = "false", valid = "true", test = "true
                     new_data = (train = new_data[idxs[idx[1]:idx[3]], :], test = new_data[idxs[idx[3]:idx[4]], :]);
                     new_data
                 else
-                    "Full set transformed"
-                    new_data
+                    new_data, test_all
                 end
             end
         end
@@ -74,7 +69,6 @@ function generate(; option = "drop", std = "false", valid = "true", test = "true
                     new_data = (train = new_data[idxs[idx[1]:idx[2]], :], valid = new_data[idxs[idx[2]:idx[3]], :], test = new_data[idxs[idx[3]:idx[4]], :]);
                     new_data
                 else
-                    "We do not provide a validation set without a test set, look at your arg."
                     empty = DataFrame()
                     empty
                 end
@@ -84,8 +78,8 @@ function generate(; option = "drop", std = "false", valid = "true", test = "true
                     new_data = (train = new_data[idxs[idx[1]:idx[3]], :], test = new_data[idxs[idx[3]:idx[4]], :]);
                     new_data
                 else
-                    "Full set transformed"
-                    new_data
+                    new_test = MLJ.transform(std_mach, select(test_all, Not([:ZER_sunshine_1, :ALT_sunshine_4])))
+                    new_data, new_test
                 end
             end
         else
@@ -95,7 +89,6 @@ function generate(; option = "drop", std = "false", valid = "true", test = "true
                     new_data = (train = new_data[idxs[idx[1]:idx[2]], :], valid = new_data[idxs[idx[2]:idx[3]], :], test = new_data[idxs[idx[3]:idx[4]], :]);
                     new_data
                 else
-                    "We do not provide a validation set without a test set, look at your arg."
                     empty = DataFrame()
                     empty
                 end
@@ -105,8 +98,7 @@ function generate(; option = "drop", std = "false", valid = "true", test = "true
                     new_data = (train = new_data[idxs[idx[1]:idx[3]], :], test = new_data[idxs[idx[3]:idx[4]], :]);
                     new_data
                 else
-                    "Full set transformed"
-                    new_data
+                    new_data, test_all
                 end
             end
         end

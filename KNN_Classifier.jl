@@ -4,12 +4,11 @@ using Plots, CSV, MLJ, DataFrames, Random, NearestNeighborModels
 include("./Data_Processing.jl")
 
 #Load the data
-test_data = CSV.read(joinpath(@__DIR__, "data", "testdata.csv"), DataFrame);
-example_submission = CSV.read(joinpath(@__DIR__, "data", "sample_submission.csv"), DataFrame);
 drop = generate(option = "drop", std = "false", valid = "false", test = "true");
 med = generate(option = "med", std = "false", valid = "false", test = "true");
 
-#Function to tune the model
+Random.seed!(2711)
+#Function to tune the model with K values between 1 and 50
 function TunedModel_KNN(data)
     model = KNNClassifier()
     self_tuning_model = TunedModel(model = model,
@@ -23,30 +22,31 @@ function TunedModel_KNN(data)
     self_tuning_mach
 end
 
+#Test the tune model on the drop data set and med data set:
 
-rep1 = report(TunedModel_KNN(drop.train))
-rep1.best_history_entry.measurement
-rep1.best_model.K
-#Show the different AUC in function of the hyperparameters.
-scatter(reshape(rep1.plotting.parameter_values, :), rep1.plotting.measurements, xlabel = "K", ylabel = "AUC")
+rep1 = report(TunedModel_KNN(drop.train));
+scatter(reshape(rep1.plotting.parameter_values, :), rep1.plotting.measurements, xlabel = "K", ylabel = "AUC");
+# K = 27 with drop
 
-rep2 = report(TunedModel_KNN(med.train))
-rep2.best_history_entry.measurement
-rep2.best_model.K
-#Show the different AUC in function of the hyperparameters.
-scatter(reshape(rep2.plotting.parameter_values, :), rep2.plotting.measurements, xlabel = "K", ylabel = "AUC")
+rep2 = report(TunedModel_KNN(med.train));
+scatter(reshape(rep2.plotting.parameter_values, :), rep2.plotting.measurements, xlabel = "K", ylabel = "AUC");
+# K = 25 with med
 
-# Drop is computed with K=27 and Med is computed with K=25
-best_mach1 = machine(KNNClassifier(K = rep1.best_model.K), select(drop.train[:,:], Not(:precipitation_nextday)), drop.train.precipitation_nextday)|> fit!
-best_mach2 = machine(KNNClassifier(K = rep2.best_model.K), select(med.train[:,:], Not(:precipitation_nextday)), med.train.precipitation_nextday)|> fit!
+# Test the best model over the test set top pick the best one
+best_mach1 = machine(KNNClassifier(K = rep1.best_model.K), select(drop.train[:,:], Not(:precipitation_nextday)), drop.train.precipitation_nextday)|> fit!;
+best_mach2 = machine(KNNClassifier(K = rep2.best_model.K), select(med.train[:,:], Not(:precipitation_nextday)), med.train.precipitation_nextday)|> fit!;
+AUC1 = losses(best_mach1, select(drop.test, Not(:precipitation_nextday)), drop.test.precipitation_nextday);
+AUC2 = losses(best_mach2, select(med.test, Not(:precipitation_nextday)), med.test.precipitation_nextday);
+# AUC_drop = 0.904 , AUC_med = 0.898
 
-losses(best_mach1, select(drop.test, Not(:precipitation_nextday)), drop.test.precipitation_nextday)
-losses(best_mach2, select(med.test, Not(:precipitation_nextday)), med.test.precipitation_nextday)
-
-#Write in the submission file with a machine trained on all data, Drop data set and K=27 seems to have the highest AUC on the test data
-tot = generate(option = "drop", valid = "false", test = "false");
-best_mach = machine(KNNClassifier(K = rep1.best_model.K), select(tot[:,:], Not(:precipitation_nextday)), tot.precipitation_nextday)|> fit!
-
-pred = pdf.(predict(best_mach, test_data), true)
-example_submission.precipitation_nextday = pred
-CSV.write(joinpath(@__DIR__,"KNN_submission.csv"), example_submission)
+#Write in the submission file with a machine trained on all data
+train, test = generate(option = "drop", std = "false", valid = "false", test = "false");
+if AUC1.auc > AUC2.auc
+    best_mach = machine(KNNClassifier(K = rep1.best_model.K), select(train[:,:], Not(:precipitation_nextday)), train.precipitation_nextday)|> fit!;
+else
+    best_mach = machine(KNNClassifier(K = rep2.best_model.K), select(train[:,:], Not(:precipitation_nextday)), train.precipitation_nextday)|> fit!;
+end
+sample = CSV.read(joinpath(@__DIR__, "data", "sample_submission.csv"), DataFrame);
+pred = pdf.(predict(best_mach, test), true);
+sample.precipitation_nextday = pred;
+CSV.write(joinpath(@__DIR__, "results", "KNN_submission.csv"), sample);
