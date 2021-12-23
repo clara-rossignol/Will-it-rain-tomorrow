@@ -24,7 +24,7 @@ When using multiple ML methods, the data must undergo multiple changes. It is ra
 - valid::string = "true" or "false": the returned data contains a training set, a validation set and a test set. We add automatically a test set because the other case is equivalent to putting test = "true" (see next arg description).
 - test::string = "true" or "false": the returned data contains a training and a test set.
 
-Special scenario: in order to train every model on the full training set and make predictions on the test set, we need to transform both sets with the same machine, for example when using standardization. When using this combination of arg generate(; option, std, valid = "false", test = "false") and any value for option and std, the function returns the training and test set transformed with the same machine in order to train a given model on the full training set and to predict with this model on the test set.
+Special scenario: in order to train every model on the full training set and make predictions on the test set, we need to transform both sets with the same machine, for example in the case where we use standardization. When using this combination of arg generate(; option, std, valid = "false", test = "false") and any value for option and std, the function returns the training and test set transformed with the same machine in order to train a given model on the full training set and to predict with this model on the test set.
 
 
 -------------------------
