@@ -33,12 +33,13 @@ Running a particular model
 For each type of model we tried, we implemented a .jl file named with the type of model it corresponds to. In order to construct a prediction .csv file with a specific model, you only need to run the associated .jl file. In each file, the code is similar:
 - First, we include all the needed packages to run the code.
 - We load each dataset.
-- We test some small model in order to rapidly exclude some sizes of hyper-parameters or some transformation of the data.
+- We test some small model in order to rapidly exclude some sizes of hyper-parameters or some transformations of the data.
 - Then, we tune a model over a particular range for some hyper-parameters.
 - We test a few of the best hyper-parameters over our own test set.
 - We pick the best model we found and use it to make predictions on the given test set.
 - We generate the .csv file in the results folder.
 
+To allow the reproduction of our result presented in the report, we fixed the seed in every tuned model or random generation in all this project.
 
 ---------------------------------
 Running the visualization notebook
