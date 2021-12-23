@@ -54,7 +54,8 @@ julia> using Pkg
 ```
 
 ## Authors
-Oscar Henry, Clara Rossignol
+- [Oscar Henry](https://github.com/Oscar-Henry)
+- [Clara Rossignol](https://github.com/clara-rossignol)
 
 
 ![](https://www.epfl.ch/wp/5.5/wp-content/themes/wp-theme-2018/assets/svg/epfl-logo.svg)
