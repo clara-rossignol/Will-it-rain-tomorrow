@@ -6,7 +6,7 @@ The repository in constitued of:
 - A data folder with the three data sets of the problem.
 - A results folder where the sumbission will appears when running the code. The submission are under the .csv format.
 - A visualization files where we explore the data using Pluto notebook.
-- A .jl files for each type of model build in order to solve this problem. In each .jl you can observe how we processed in order to develop our best model for a particular type of model.
+- Multiple .jl files for each type of model build in order to solve this problem. In each .jl you can observe how we processed in order to develop our best model for a particular type of model.
 - A license
 - A .gitignore in order to avoid IDE originating files and results files.
 - A .toml files with all the necessary packages needed to run the code
