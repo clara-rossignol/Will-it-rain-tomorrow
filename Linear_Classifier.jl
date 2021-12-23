@@ -30,8 +30,9 @@ function TunedModel_L2(data)
 	self_tuning_mach
 end
 
-Random.seed!(2711)
+
 function TunedModel_L1(data)
+	Random.seed!(2711)
 	model = LogisticClassifier(penalty = :l1)
 	self_tuning_model = TunedModel(model = model,
 	                         resampling = CV(nfolds = 10),
