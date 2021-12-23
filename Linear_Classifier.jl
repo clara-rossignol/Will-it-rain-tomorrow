@@ -7,7 +7,7 @@ include("./Data_Processing.jl")
 drop = generate(option = "drop", std = "false", valid = "false", test = "true");
 med = generate(option = "med", std = "false", valid = "false", test = "true");
 
-# Test if the machine have a greater AUC on the drop data set or the med data set
+#Test if the machine has a greater AUC on the drop data set or the med data set
 mach_drop = machine(LogisticClassifier(), select(drop.train[:,:], Not(:precipitation_nextday)), drop.train.precipitation_nextday) |> fit!;
 mach_med = machine(LogisticClassifier(), select(med.train[:,:], Not(:precipitation_nextday)), med.train.precipitation_nextday) |> fit!;
 losses(mach_drop, select(drop.test[:,:], Not(:precipitation_nextday)), drop.test.precipitation_nextday) # 0.79
@@ -59,7 +59,7 @@ scatter(reshape(rep_med_L2.plotting.parameter_values, :), rep_med_L2.plotting.me
 rep_med_L1 = report(TunedModel_L1(med_std.train));
 scatter(reshape(rep_med_L1.plotting.parameter_values, :), rep_med_L1.plotting.measurements, xlabel = "Lamba", ylabel = "AUC")
 
-# # Test the best models over the test set with the best hyper-param top pick the best one
+#Test the best models over the test set with the best hyper-parameters to pick the best one
 best_mach_drop_L2 = machine(LogisticClassifier(penalty = :l2, lambda = rep_drop_L2.best_model.lambda), select(drop_std.train[:,:], Not(:precipitation_nextday)), drop_std.train.precipitation_nextday)|> fit!
 best_mach_drop_L1 = machine(LogisticClassifier(penalty = :l1, lambda = rep_drop_L1.best_model.lambda), select(drop_std.train[:,:], Not(:precipitation_nextday)), drop_std.train.precipitation_nextday)|> fit!
 best_mach_med_L2 = machine(LogisticClassifier(penalty = :l2, lambda = rep_med_L2.best_model.lambda), select(med_std.train[:,:], Not(:precipitation_nextday)), med_std.train.precipitation_nextday)|> fit!
@@ -70,7 +70,7 @@ losses(best_mach_med_L2, select(med_std.test, Not(:precipitation_nextday)), med_
 losses(best_mach_med_L1, select(med_std.test, Not(:precipitation_nextday)), med_std.test.precipitation_nextday)
 # AUC_DROP_L2 = 0.917, AUC_DROP_L1 = 0.914, AUC_MED_L2 = 0.914, AUC_MED_L1 = 0.912
 
-#Write in the submission file with the best machine trained on all data
+#Write in the submission file with the best machine trained on all the data
 train, test = generate(option = "drop", std = "true", valid = "false", test = "false");
 best_mach = machine(LogisticClassifier(penalty = :l2, lambda = rep_drop_L2.best_model.lambda), select(train[:,:], Not(:precipitation_nextday)), train.precipitation_nextday)|> fit!;
 sample = CSV.read(joinpath(@__DIR__, "data", "sample_submission.csv"), DataFrame);
