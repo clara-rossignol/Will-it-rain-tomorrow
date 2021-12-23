@@ -7,9 +7,9 @@ include("./Data_Processing.jl")
 drop = generate(option = "drop", std = "false", valid = "false", test = "true");
 med = generate(option = "med", std = "false", valid = "false", test = "true");
 
-Random.seed!(2711)
 #Function to tune the model with K values between 1 and 50
 function TunedModel_KNN(data)
+    Random.seed!(2711)
     model = KNNClassifier()
     self_tuning_model = TunedModel(model = model,
                                 resampling = CV(nfolds = 10),

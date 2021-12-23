@@ -76,4 +76,4 @@ best_mach = machine(LogisticClassifier(penalty = :l2, lambda = rep_drop_L2.best_
 sample = CSV.read(joinpath(@__DIR__, "data", "sample_submission.csv"), DataFrame);
 pred = pdf.(predict(best_mach, test), true);
 sample.precipitation_nextday = pred;
-CSV.write(joinpath(@__DIR__, "results", "LInear_submission.csv"), sample);
+CSV.write(joinpath(@__DIR__, "results", "Linear_submission.csv"), sample);
