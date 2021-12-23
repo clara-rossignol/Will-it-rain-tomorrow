@@ -25,18 +25,18 @@ end
 #Test the tune model on the drop data set and med data set:
 
 rep1 = report(TunedModel_KNN(drop.train));
-scatter(reshape(rep1.plotting.parameter_values, :), rep1.plotting.measurements, xlabel = "K", ylabel = "AUC");
+scatter(reshape(rep1.plotting.parameter_values, :), rep1.plotting.measurements, xlabel = "K", ylabel = "AUC")
 # K = 27 with drop
 
 rep2 = report(TunedModel_KNN(med.train));
-scatter(reshape(rep2.plotting.parameter_values, :), rep2.plotting.measurements, xlabel = "K", ylabel = "AUC");
+scatter(reshape(rep2.plotting.parameter_values, :), rep2.plotting.measurements, xlabel = "K", ylabel = "AUC")
 # K = 25 with med
 
-# Test the best model over the test set top pick the best one
+# Test the best model over the test set with the best hyper-param top pick the best one
 best_mach1 = machine(KNNClassifier(K = rep1.best_model.K), select(drop.train[:,:], Not(:precipitation_nextday)), drop.train.precipitation_nextday)|> fit!;
 best_mach2 = machine(KNNClassifier(K = rep2.best_model.K), select(med.train[:,:], Not(:precipitation_nextday)), med.train.precipitation_nextday)|> fit!;
-AUC1 = losses(best_mach1, select(drop.test, Not(:precipitation_nextday)), drop.test.precipitation_nextday);
-AUC2 = losses(best_mach2, select(med.test, Not(:precipitation_nextday)), med.test.precipitation_nextday);
+AUC1 = losses(best_mach1, select(drop.test, Not(:precipitation_nextday)), drop.test.precipitation_nextday)
+AUC2 = losses(best_mach2, select(med.test, Not(:precipitation_nextday)), med.test.precipitation_nextday)
 # AUC_drop = 0.904 , AUC_med = 0.898
 
 #Write in the submission file with a machine trained on all data
