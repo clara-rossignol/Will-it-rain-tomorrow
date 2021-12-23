@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.17.3
+# v0.17.2
 
 using Markdown
 using InteractiveUtils
@@ -15,8 +15,9 @@ end
 # ╔═╡ 97101f45-c447-4fd1-bbfd-d4fead047118
 md"
 # Will it rain tomorrow ?
-This notebook shows how we dealt with the training data set given for the project [Will it rain tomorrow ?](https://www.kaggle.com/c/bio322-will-it-rain-tomorrow).
-We propose some plots of the data and the transformation we used in our models.
+This notebook shows how we dealt with the training dataset given for the project [Will it rain tomorrow ?]
+(https://www.kaggle.com/c/bio322-will-it-rain-tomorrow).
+We propose some plots of the data and the transformations we used in our models.
 
 First we need to load the necessary packages. We used the MLCourse env in order to access the packages.
 "
@@ -28,12 +29,12 @@ md"
 
 # ╔═╡ 1f8ded80-aee0-47ee-9617-b6cc53b6c51a
 md"
-## First look at the data sets
+## First look at the datasets
 "
 
 # ╔═╡ 75c3f94d-8d0a-4f6f-ab50-41e46541c3d8
 md"
-Then we load the data sets;
+We load the datasets;
 1. The training data set
 2. The test data set
 "
@@ -51,8 +52,9 @@ end
 
 # ╔═╡ 0d8b1166-b9c8-44ae-abfa-9060e9a7dd33
 md"
-We can see that out training data consists of 3176 rows and 529 columns. We have 528 predictors in order to predict the 529th column, whether or not it is raining the next day in Pully called :precipitation\_nextday.
-The test is then composed only by the 528 predictors with different data points. We can then use this data set top predict the :precipitation\_nextday output using our models.
+We can see that our training data consists of 3176 rows and 529 columns. We have 528 predictors in order to predict the 529th column, whether or not it is raining the next day in Pully called :precipitation\_nextday.
+
+The test data is then composed only of the 528 predictors with different data points. We can use this dataset to predict the :precipitation\_nextday output using our models.
 "
 
 # ╔═╡ cb8b6542-1ec9-41a2-8508-bb7acc944e32
@@ -63,7 +65,7 @@ size(test_data)
 
 # ╔═╡ ebdf399c-72f4-4aee-92b2-08727423d174
 md"
-We can use the function describe(::DataFrames) in order to assess the first properties of each predictor. This can help us to find the predictor with mean and std equal to 0 which will be a problem when standardizing.
+We can use the function describe(::DataFrames) in order to assess the first properties of each predictor. This can help us find the predictors with mean and standard deviation equal to 0, which will be a problem when standardizing.
 "
 
 # ╔═╡ 1b27bf59-2f01-4802-bac9-c325ba1681c3
@@ -76,7 +78,7 @@ md"
 
 # ╔═╡ 406831e5-e18a-40ba-a0da-936774d48425
 md"
-Missing data points is one of the first step in ML project, because the models will need complete data set to be fitted on.
+Dealing with missing data points is of the first steps in a Machine Learning project. The models will need a complete dataset to be fitted on.
 "
 
 # ╔═╡ c31e9d13-c4fe-4350-9fdf-3ca7450799d9
@@ -107,7 +109,7 @@ end
 # ╔═╡ cbfa4870-8db1-4e5d-ae0e-27d1c2b55066
 md"
 Is there any good reason to put the median in those empty cells ? It is probably better than putting complete random data, but other ways of filling these cells can be studied.
-It still allow us to concerve all the data points and thus a lot of information from the original data set.
+It still allows us to conserve all the data points and thus a lot of information from the original data set.
 "
 
 # ╔═╡ 4593a912-1a19-4e65-bdc5-a777681bbcf6
@@ -117,7 +119,7 @@ md"
 
 # ╔═╡ 76adc00d-081e-4cd0-92a6-07d2d7599fb3
 md"
-Lookin at Pully measurements in order to observe first result correlation in our data.
+Looking at Pully measurements in order to observe first result correlation in our data.
 "
 
 # ╔═╡ 31286f5d-33cb-4399-9744-139655a4e919
@@ -130,11 +132,11 @@ md"
 
 # ╔═╡ 46da38df-4c18-4767-8325-db55454487e6
 md"
-In order to standardize our data, we need to find the predictors that have a mean and a std equal to zero. We can use the fit!(..., verbosity=2) function on the Standardizer() machine. This will give us in our terminal which predictors have a mean and std equal to 0. Having the mean and std equal to 0 lead to the fraction 0/0 during the standardization, thus creating NaN cells which are a problem when fitting models." 
+In order to standardize our data, we need to find the predictors that have a mean and a standard deviation equal to zero. We can use the fit!(..., verbosity=2) function on the Standardizer() machine. This will give us in our terminal which predictors have a mean and standard deviation equal to 0. Having the mean and standard deviation equal to 0 leads to the fraction 0/0 during the standardization, thus creating NaN cells which are a problem when fitting models." 
 
 # ╔═╡ e1b4eb7e-f6a3-4510-908d-922b3211f300
 md"
-In this step we found that :ZER\_sunshine\_1 and :ALT\_sunshine\_4 have a mean and a std equal to zero, we drop these two columns in order to standardize the data."
+In this step we found that :ZER\_sunshine\_1 and :ALT\_sunshine\_4 have a mean and a standard deviation equal to zero. We then drop these two columns in order to standardize the data."
 
 # ╔═╡ cc06a386-7edb-42fa-a4e2-fa43b2d79779
 begin
@@ -145,7 +147,7 @@ end
 
 # ╔═╡ 40430b02-1a70-45fd-9f14-d446c95f77eb
 md"
-When we look at the size of the data set, we can see that it has 2 predictors less now, so 526 predictors and 1 ouput columns."
+When we look at the size of the data set, we can see that it has 2 predictors less now, so 526 predictors and 1 ouput column."
 
 # ╔═╡ 4224387b-155f-4bff-944d-4254d54e01a7
 size(data_drop_std)
@@ -233,7 +235,7 @@ end
 
 # ╔═╡ 267b717b-cc3e-4b1a-ac2c-416ffd9379df
 md"
-This first introduction to the data sets will allow us to tuned our model more precisely, a important function called generate(; option, std, valid, test) allow the transformation of the data in the file Data\_processing.jl that will be used in every ML methods"
+This first introduction to the datasets will allow us to tune our models more precisely. An important function called generate(; option, std, valid, test) allows the transformation of the data in the file Data\_Processing.jl that will be used in every ML method."
 
 # ╔═╡ Cell order:
 # ╟─97101f45-c447-4fd1-bbfd-d4fead047118
@@ -276,7 +278,7 @@ This first introduction to the data sets will allow us to tuned our model more p
 # ╠═a1a8a212-b50f-494e-bb63-79e5544c9267
 # ╠═14525726-dd52-4ec1-a68b-51d0cd99ef7a
 # ╟─9861d8a5-dce3-4446-a648-357829bb63a1
-# ╠═886ac080-398e-4060-b419-28b636e77bac
+# ╟─886ac080-398e-4060-b419-28b636e77bac
 # ╟─9cb38d7b-6065-4756-acfb-f3e888539fdd
-# ╠═5af13796-7a27-4cc5-8cc1-90679500f0ac
+# ╟─5af13796-7a27-4cc5-8cc1-90679500f0ac
 # ╟─267b717b-cc3e-4b1a-ac2c-416ffd9379df
