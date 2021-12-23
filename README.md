@@ -28,7 +28,7 @@ Special scenario: in order to train every model on the full training set and mak
 
 
 -------------------------
-Runing a particular model
+Running a particular model
 -------------------------
 For each type of model we tried, we implemented a .jl file named with the type of model it corresponds to. In order to construct a prediction .csv file with a specific model, you only need to run the associated .jl file. In each file, the code is similar:
 - First, we include all the needed packages to run the code.
@@ -41,7 +41,7 @@ For each type of model we tried, we implemented a .jl file named with the type o
 
 
 ---------------------------------
-Runing the visualization notebook
+Running the visualization notebook
 ---------------------------------
 In order to run the Pluto notebook "Visualization_Notebook.jl" one must download [julia](https://julialang.org/downloads) (at least version 1.6.2) and open the julia terminal.
 
