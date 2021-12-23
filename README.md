@@ -39,7 +39,7 @@ For each type of model we tried, we implemented a .jl file named with the type o
 - We pick the best model we found and use it to make predictions on the given test set.
 - We generate the .csv file in the results folder.
 
-To allow the reproduction of our result presented in the report, we fixed the seed in every tuned model or random generation in all this project.
+To allow the reproduction of our results presented in the report, we fixed the seed in every tuned model or random generation in all this project.
 
 ---------------------------------
 Running the visualization notebook
